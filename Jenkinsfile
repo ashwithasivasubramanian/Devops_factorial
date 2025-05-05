@@ -1,10 +1,14 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven' // Match this to your Global Tool Config name
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/ashwithasivasubramanian/Devops_factorial.git', branch: 'main'
+                checkout scm
             }
         }
 
@@ -14,28 +18,16 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
+        stage('Test') {
             steps {
                 sh 'mvn test'
             }
         }
 
-        stage('Publish Test Results') {
+        stage('Publish Test Report') {
             steps {
                 junit 'target/surefire-reports/*.xml'
             }
-        }
-    }
-
-    post {
-        success {
-            echo 'Build and tests succeeded.'
-        }
-        failure {
-            echo 'Build or tests failed.'
-        }
-        always {
-            cleanWs()
         }
     }
 }
